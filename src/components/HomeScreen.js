@@ -1,14 +1,27 @@
-import { View, Text, Button, StatusBar, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { View, Text, StatusBar, StyleSheet, Pressable } from 'react-native';
 
-export const HomeScreen = () => {
+export const HomeScreen = ({ navigation }) => {
+  const [press, setPress] = useState(false);
+
+  const handlePress = () => {
+    press ? setPress(false) : setPress(true);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>League Generator</Text>
       <Text style={styles.description}>
-        Make sure the player List is updated and then click "Start Tournament"
+        To start a tournament press "Tournament Setup"
       </Text>
-      <Button title='Players List' style={styles.button} />
-
+      <Pressable
+        onPressIn={handlePress}
+        onPressOut={handlePress}
+        onPress={() => navigation.navigate('Settings')}>
+        <Text style={press ? styles.buttonPress : styles.button}>
+          Tournament Setup
+        </Text>
+      </Pressable>
       <StatusBar style='auto' />
     </View>
   );
@@ -17,24 +30,31 @@ export const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
-    backgroundColor: '#999',
+    alignItems: 'center',
+    backgroundColor: 'white',
   },
   title: {
-    marginTop: 16,
-    paddingVertical: 8,
-    borderWidth: 4,
-    borderColor: '#20232a',
-    borderRadius: 6,
-    color: '#111',
-    textAlign: 'center',
     fontSize: 30,
-    fontWeight: 'bold',
+    padding: 12,
   },
   description: {
-    fontSize: 15,
-    justifyContent: 'center',
-    color: '#fns',
+    textAlign: 'center',
+    width: '60%',
+    paddingVertical: 10,
   },
-  button: {},
+  button: {
+    borderWidth: 1,
+    padding: 5,
+    borderRadius: 6,
+    fontSize: 15,
+    marginTop: 5,
+  },
+  buttonPress: {
+    borderWidth: 1,
+    padding: 5,
+    borderRadius: 6,
+    fontSize: 15,
+    marginTop: 5,
+    backgroundColor: '#999',
+  },
 });
