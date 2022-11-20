@@ -4,12 +4,17 @@ import { useState } from 'react';
 export const ToggleSwitch = props => {
   const [toggleOn, setToggleOn] = useState(true);
 
+  const handlePress = () => {
+    toggleOn ? setToggleOn(false) : setToggleOn(true);
+    props.func(toggleOn);
+  };
+
   return (
     <View style={styles.toggleContainer}>
       <Text style={styles.title}>{props.title}</Text>
       <TouchableOpacity
         onPress={() => {
-          toggleOn ? setToggleOn(false) : setToggleOn(true);
+          handlePress();
         }}>
         <View style={toggleOn ? styles.togglePicked : styles.toggleNotPicked}>
           <Text>{props.valueA}</Text>

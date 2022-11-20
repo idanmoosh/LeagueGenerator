@@ -12,15 +12,27 @@ import { PlayerInputField } from './PlayerInputField';
 import { ToggleSwitch } from './ToggleSwitch';
 
 export const Settings = ({ navigation }) => {
+  // test
+  let fakePlayers = ['msh', 'udi', 'elr', 'gal'];
+
   const [press, setPress] = useState(false);
-  const [teamSize, setTeamSize] = useState(1);
-  const [competitionType, setCompetitionType] = useState('ST');
-  const [players, setPlayers] = useState([]);
+  const [teamSize, setTeamSize] = useState(false);
+  const [competitionType, setCompetitionType] = useState(false);
+  const [players, setPlayers] = useState(fakePlayers);
 
   const params = {
-    playres: players,
+    players: players,
     teamSize: teamSize,
     competitionType: competitionType,
+  };
+  const setTeam = size => {
+    setTeamSize(size);
+    return size;
+  };
+
+  const setCompetition = type => {
+    setCompetitionType(type);
+    return type;
   };
 
   const addPlayer = player => {
@@ -47,13 +59,15 @@ export const Settings = ({ navigation }) => {
 
         <View style={styles.toggleContainer}>
           <ToggleSwitch
+            func={setTeam}
             title='Team Size'
             valueA='2 V 2'
             valueB='1 V 1'></ToggleSwitch>
           <ToggleSwitch
+            func={setCompetition}
             title='Tournament Rules'
-            valueA='House Rules'
-            valueB='Standard Rules'></ToggleSwitch>
+            valueA='dinamyc teams'
+            valueB='static teams'></ToggleSwitch>
         </View>
 
         <View style={styles.inputField}>
@@ -66,7 +80,7 @@ export const Settings = ({ navigation }) => {
               <PlayerTag
                 name={i}
                 deletePlayer={deletePlayer}
-                key={`${players.indexOf(i)}`}
+                key={`${players.indexOf(i) + i}`}
                 id={`${players.indexOf(i)}`}
               />
             );
