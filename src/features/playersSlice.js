@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { v1 as uuidv1 } from 'uuid';
 
 const v1options = {
@@ -27,25 +27,26 @@ export const playersSlice = createSlice({
   name: 'players',
   initialState,
   reducers: {
-    getPlayers: state => {
-      return { ...state };
-    },
     setTeamId: (state, action) => {
-      const name = action.payload.name;
+      const id = action.payload.id;
       const teamNo = action.payload.teamNo;
       state.players.map(player => {
-        if (player.name === name) {
+        if (player.id === id) {
           player.teamId = teamNo;
         }
       });
     },
+    getPlayers: state => {
+      return state.players;
+    },
+
     addPlayer: (state, action) => {
       const name = action.payload;
       let newPlayer = createPlayer(name);
       state.players.push(newPlayer);
     },
     upateResults: (state, action) => {
-      let id = actions.payload.id;
+      let id = action.payload.id;
       let result = action.payload.result;
       let player = state.players.filter(player => player.id == id);
       let otherPlayers = state.players.filter(player => !player.id == id);
@@ -67,16 +68,9 @@ export const playersSlice = createSlice({
       state.players = [...otherPlayers, player];
     },
   },
-  extraReducers: builder => {
-    builder.addCase(addPlayer, (state, action) => {});
-  },
 });
 
-export const { getPlayers, addPlayer, updateResults, setTeamId } =
+export const { addPlayer, updateResults, setTeamId, getPlayers } =
   playersSlice.actions;
 
 export default playersSlice.reducer;
-
-export const selectPlayers = state => {
-  return state.players;
-};

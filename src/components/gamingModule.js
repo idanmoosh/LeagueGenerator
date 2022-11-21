@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,13 +9,6 @@ import {
 import { useSelector } from 'react-redux';
 import { setTeamId } from '../features/playersSlice';
 import { useDispatch } from 'react-redux';
-import { selectPlayers } from '../features/playersSlice';
-
-import {
-  shuffleArray,
-  sortTeamsbyGame,
-  pickTwoPlayers,
-} from '../util/gamingUtil';
 
 export const GameModule = props => {
   const dispatch = useDispatch();
@@ -28,148 +21,82 @@ export const GameModule = props => {
   const { playingSingles, playingStandard, playersWithStats } = props;
   const store = useSelector(state => state.root.playersSlice.players);
 
-  const pickTwoTeams = store => {
-    const sortedPlayers = sortTeamsbyGame(store);
-    const teamA = [sortedPlayers[0]];
-    let teamB = [];
-    console.log(sortedPlayers);
-    for (let i = 1; i < 3; i++) {
-      if (sortedPlayers[i].teamId === teamA[0].teamId) {
-        teamA[1] = sortedPlayers[i];
-      } else {
-        teamB.push(sortedPlayers[i]);
-      }
-    }
-    if (teamA.length !== 2) {
-      teamA[1] = findTeammate(sortedPlayers, teamA[0].teamId, teamA[0][id]);
-    }
-    console.log('teamA');
-    console.log(teamA);
-    console.log('teamB');
-    console.log(teamB);
-    console.log(teamB);
-    if (teamB.length !== 2) {
-      teamB[1] = findTeammate(sortedPlayers, teamB[0].teamId, teamB[0][id]);
-    }
-
-    teamB[1] = sortedPlayers.filter(player => {
-      player.id !== teamB[0].id && player.teamId === teamB[0].teamId;
-    });
-
-    let teams = teamA + teamB;
-    console.log('teams ' + teams);
-    return teams;
-  };
-
-  const splitToTeams = players => {
-    console.log(players);
-    let playersList = [...players];
-    playersList = shuffleArray(playersList);
-    playersList.map(player => {
-      if (playersList.indexOf(player) % 2 === 0) {
-        setTeamId(playersList.indexOf(player) + 1);
-      } else {
-        setTeamId(playersList.indexOf(player));
-      }
-    });
-    return playersList;
-  };
-
-  const divideToTwo = arr => {
-    try {
-      setTeamA(arr[0], arr[1]);
-      setTeamB(arr[2], arr[3]);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const findTeammate = (players, teamId, playerId) => {
-    const otherTeamMember = players.find((value, index) => {
-      players[index].id !== playerId && players[index].teamId === teamId;
-    });
-    return otherTeamMember;
-  };
-
-  const getTeams = () => {
-    const players = useSelector(selectPlayers);
-  };
-
-  const setToTeams = array => {
-    let newArray = [...array];
-    newArray = shuffleArray(newArray);
-    const arrayHalf = Math.round(Math.floor(array.length / 2));
-    for (let i = 0; i < newArray.length + 1; i++) {
-      try {
-        if (i < arrayHalf) {
-          dispatch(setTeamId({ name: newArray[i].name, teamNo: i + 1 }));
-        }
-        if (i >= arrayHalf) {
-          dispatch(
-            setTeamId({ name: newArray[i].name, teamNo: i + 1 - arrayHalf })
-          );
-        }
-      } catch (err) {
-        return err;
-      }
-    }
-    return newArray;
-  };
-
   const handleNewGame = () => {
-    if (!gameOn) {
-      setGameOn(true);
-      console.log('hello hello ');
-      if (!playingSingles) {
-        // need to understand why the store do not update
-        setToTeams(store);
-        let twoTeams = pickTwoTeams(store);
-        divideToTwo(twoTeams);
-      } else if (playingSingles) {
-        console.log('hello singles ');
-
-        setTeamA(teams[0]);
-        setTeamB(teams[1]);
+    if (playingSingles) {
+      setSinglesMatch();
+      if (!gameOn) {
+        setGameOn(true);
       }
-    } else if (gameOn) {
-      if (playingSingles) {
-        let teams = pickTwoPlayers(store);
-        console.log('hello 1 ');
-
-        setTeamA(teams[0]);
-        setTeamB(teams[1]);
-      } else if (playingStandard && !playingSingles) {
-        console.log('hello 2 ');
-        let teams = pickTwoTeams(store);
-        divideToTwo(teams);
-      } else if (!playingStandard && !playingSingles) {
-        let newTeams = setToTeams(store);
-        let teams = pickTwoTeams(newTeams);
-        console.log('hello 3 ');
-        divideToTwo(teams);
-      }
+    }
+    if (!playingSingles && playingStandard) {
+      setStandardMatch();
+    }
+    if (!playingSingles && !playingStandard) {
+      setRandomMatch();
     }
   };
 
-  console.log(
-    'team A ' +
-      teamA +
-      ',' +
-      'team B ' +
-      teamB +
-      ',' +
-      'playing Standard ' +
-      playingStandard +
-      ',' +
-      'playing Singles ' +
-      playingSingles +
-      ','
-  );
+  const setSinglesMatch = () => {
+    let players = [...store];
+    players = shuffleArray(players);
+    players = sortPlayersBy('games');
+    setTeamA([players[0]]);
+    setTeamB([players[1]]);
+    return;
+  };
+  const setStandardMatch = () => {};
+  const setRandomMatch = () => {
+    setTeams(store).then(res => console.log(res));
+  };
+
+  const sortPlayersBy = category => {
+    let players = [...store];
+    players.sort((p1, p2) => {
+      p1[category] < p2[category] ? 1 : p1[category] > p2[category] ? -1 : 0;
+    });
+    return players;
+  };
+  const shuffleArray = array => {
+    let currentIndex = array.length,
+      randomIndex;
+
+    // While there remain elements to shuffle.
+    while (currentIndex != 0) {
+      // Pick a remaining element.
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex],
+        array[currentIndex],
+      ];
+    }
+
+    return array;
+  };
+  const setTeams = async () => {
+    let players = [...store];
+    players = shuffleArray(players);
+
+    await players.map(player => {
+      dispatch(
+        setTeamId({
+          id: player.id,
+          teamNo: Math.round(Math.ceil(players.indexOf(player) / 2 + 0.1)),
+        })
+      );
+    });
+    return players;
+  };
+  const chooseTeams = () => {};
 
   const handleScoreSubmit = () => {};
+
   const handlePress = () => {
     press ? setPress(false) : setPress(true);
   };
+
   return (
     <View style={styles.playerContainer}>
       <Text style={styles.title}>GAME MODULE</Text>
@@ -188,18 +115,18 @@ export const GameModule = props => {
       <View style={press ? styles.gameScreen : styles.buttonPress}>
         <Text style={styles.gameTitle}>Game Between</Text>
         <View style={styles.teamTitle}>
-          {/*teamA.map(player => (
+          {teamA.map(player => (
             <Text key={player.name + player.id} style={styles.team}>
               {player.name}
             </Text>
-          ))*/}
+          ))}
           <Text style={styles.team}> VS </Text>
 
-          {/*teamB.map(player => (
+          {teamB.map(player => (
             <Text key={player.name + player.id} style={styles.team}>
               {player.name}
             </Text>
-          ))*/}
+          ))}
         </View>
         <View style={styles.score}>
           <TextInput
