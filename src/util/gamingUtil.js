@@ -1,86 +1,54 @@
-/*import { setTeamId } from '../features/playersSlice';
+import { v1 as uuidv1 } from 'uuid';
 
-export const pickTwoPlayers = store => {
-  let sortedPlayers = sortTeamsbyGame(store);
-  const playerA = [sortedPlayers[0]];
-  const playerB = [sortedPlayers[1]];
-  const list = [playerA, playerB];
-  return list;
-};
+class GamingUtils {
+  sortPlayersBy(category, store) {
+    let players = [...store];
+    players.sort((p1, p2) => {
+      p1[category] < p2[category] ? 1 : p1[category] > p2[category] ? -1 : 0;
+    });
+    return players;
+  }
+  shuffleArray(array) {
+    let currentIndex = array.length,
+      randomIndex;
 
-export const sortTeamsbyGame = players => {
-  const sortedPlayers = [...players];
+    // While there remain elements to shuffle.
+    while (currentIndex != 0) {
+      // Pick a remaining element.
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
 
-  let sortedPlayersList = sortedPlayers.sort((p1, p2) =>
-    p1.games < p2.games ? 1 : p1.games > p2.games ? -1 : 0
-  );
-  return sortedPlayersList;
-};
-
-export const splitToTeams = players => {
-  console.log(players);
-  let playersList = [...players];
-  playersList = shuffleArray(playersList);
-  playersList.map(player => {
-    if (playersList.indexOf(player) % 2 === 0) {
-      setTeamId(playersList.indexOf(player) + 1);
-    } else {
-      setTeamId(playersList.indexOf(player));
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex],
+        array[currentIndex],
+      ];
     }
-  });
-  return playersList;
-};
 
-export const shuffleArray = array => {
-  let currentIndex = array.length,
-    randomIndex;
-
-  // While there remain elements to shuffle.
-  while (currentIndex != 0) {
-    // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
+    return array;
   }
 
-  return array;
-};
+  createPlayer = name => {
+    const v1options = {
+      node: [0x01, 0x23, 0x45, 0x67, 0x89, 0xab],
+      clockseq: 0x1234,
+      msecs: new Date('2022-11-01').getTime(),
+    };
+    return {
+      id: uuidv1(v1options),
+      name: name,
+      points: 0,
+      wins: 0,
+      losses: 0,
+      draws: 0,
+      games: 0,
+      teamId: 0,
+    };
+  };
 
-export const pickTwoTeams = store => {
-  const sortedPlayers = sortTeamsbyGame(store);
-  const teamA = [sortedPlayers[0]];
-  let teamB = [];
-  console.log(sortedPlayers);
-  for (let i = 1; i < 3; i++) {
-    if (sortedPlayers[i].teamId === teamA[0].teamId) {
-      teamA[1] = sortedPlayers[i];
-    } else {
-      teamB.push(sortedPlayers[i]);
-    }
-  }
-  if (teamA.length !== 2) {
-    teamA[1] = findTeammate(sortedPlayers, teamA[0].teamId, teamA[0][id]);
-  }
-  console.log('teamA');
-  console.log(teamA);
-  console.log('teamB');
-  console.log(teamB);
-  console.log(teamB);
-  if (teamB.length !== 2) {
-    teamB[1] = findTeammate(sortedPlayers, teamB[0].teamId, teamB[0][id]);
-  }
+  removeDuplicates = arr => {
+    return arr.filter((item, index) => arr.indexOf(item) === index);
+  };
+}
 
-  teamB[1] = sortedPlayers.filter(player => {
-    player.id !== teamB[0].id && player.teamId === teamB[0].teamId;
-  });
-
-  let teams = teamA + teamB;
-  console.log('teams ' + teams);
-  return teams;
-};
-*/
+export default new GamingUtils();

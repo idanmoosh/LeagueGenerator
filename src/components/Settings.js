@@ -10,6 +10,7 @@ import {
 import { PlayerTag } from './playerTag';
 import { PlayerInputField } from './PlayerInputField';
 import { ToggleSwitch } from './ToggleSwitch';
+import { useDispatch } from 'react-redux';
 
 export const Settings = ({ navigation }) => {
   // test
@@ -19,6 +20,7 @@ export const Settings = ({ navigation }) => {
   const [teamSize, setTeamSize] = useState(false);
   const [competitionType, setCompetitionType] = useState(false);
   const [players, setPlayers] = useState(fakePlayers);
+  const dispatch = useDispatch();
 
   const params = {
     players: players,
@@ -46,6 +48,7 @@ export const Settings = ({ navigation }) => {
 
   const handleSubmit = () => {
     handlePress();
+
     navigation.navigate('Tournament', { params: params });
   };
   const handlePress = () => {
@@ -118,6 +121,7 @@ const styles = StyleSheet.create({
   },
   playerList: {
     margin: 12,
+    width: '90%',
     justifyContent: 'center',
     flexDirection: 'row',
   },

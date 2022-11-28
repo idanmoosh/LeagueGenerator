@@ -7,29 +7,16 @@ import {
   TextInput,
 } from 'react-native';
 import { useSelector } from 'react-redux';
-export const GameModule = props => {
-  const [press, setPress] = useState(false);
-  const store = useSelector(state => state.root.playersSlice.players);
+import { useDispatch } from 'react-redux';
+import utils from '../util/gamingUtil';
+import {
+  setTeamId,
+  setCounter,
+  setTeamsZero,
+  updateState,
+} from '../features/playersSlice';
 
-  const {
-    teamA,
-    teamB,
-    setTeamA,
-    setTeamB,
-    scoreA,
-    scoreB,
-    setScoreA,
-    setScoreB,
-    handleEndTournament,
-    handleNewGame,
-    handleScoreSubmit,
-  } = props;
-
-  const handlePress = () => {
-    press ? setPress(false) : setPress(true);
-  };
-  useEffect(() => {}, [store]);
-
+export const GamePanel = props => {
   return (
     <View style={styles.playerContainer}>
       <Text style={styles.title}>GAME MODULE</Text>
@@ -88,7 +75,9 @@ export const GameModule = props => {
         <TouchableOpacity
           onPressIn={e => {
             e.preventDefault();
-            handleScoreSubmit(teamA, teamB, scoreA, scoreB);
+            scoreA && scoreB
+              ? handleScoreSubmit(teamA, teamB, scoreA, scoreB)
+              : alert('please submit values');
           }}
           onPressOut={handlePress}>
           <Text style={press ? styles.button : styles.buttonPress}>Submit</Text>
@@ -159,4 +148,4 @@ const styles = StyleSheet.create({
   team: { paddingRight: 20 },
 });
 
-export default GameModule;
+export default GamePanel;
