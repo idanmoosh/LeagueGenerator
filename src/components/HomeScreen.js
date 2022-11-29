@@ -22,6 +22,9 @@ export const HomeScreen = ({ navigation }) => {
           Tournament Setup
         </Text>
       </Pressable>
+
+      <Text style={styles.title}>Built by Idan Haim</Text>
+
       <StatusBar style='auto' />
     </View>
   );
