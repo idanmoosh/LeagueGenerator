@@ -10,11 +10,10 @@ import {
 import { PlayerTag } from './playerTag';
 import { PlayerInputField } from './PlayerInputField';
 import { ToggleSwitch } from './ToggleSwitch';
-import { useDispatch } from 'react-redux';
 
 export const Settings = ({ navigation }) => {
   // test
-  let fakePlayers = ['msh', 'udi', 'elr', 'gal'];
+  let fakePlayers = ['cr7', 'msi'];
 
   const [press, setPress] = useState(false);
   const [teamSize, setTeamSize] = useState(false);
