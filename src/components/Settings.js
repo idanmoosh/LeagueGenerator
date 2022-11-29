@@ -20,7 +20,6 @@ export const Settings = ({ navigation }) => {
   const [teamSize, setTeamSize] = useState(false);
   const [competitionType, setCompetitionType] = useState(false);
   const [players, setPlayers] = useState(fakePlayers);
-  const dispatch = useDispatch();
 
   const params = {
     players: players,
@@ -124,6 +123,7 @@ const styles = StyleSheet.create({
     width: '90%',
     justifyContent: 'center',
     flexDirection: 'row',
+    flexWrap: 'wrap',
   },
 
   button: {

@@ -49,6 +49,57 @@ class GamingUtils {
   removeDuplicates = arr => {
     return arr.filter((item, index) => arr.indexOf(item) === index);
   };
+  findIds = arr => {
+    let idList = arr.map(player => player.id);
+    return idList;
+  };
+  createDeepCopy = arr => {
+    const newArr = [];
+    arr.forEach(value => newArr.push(value));
+    return newArr;
+  };
+  upadteWin = (arr, idArr) => {
+    console.log('winning submission');
+    for (let i = 0; i < idArr.length; i++) {
+      arr.forEach(player => {
+        if (player.id === idArr[i]) {
+          console.log(player);
+          player.games = player.games + 1;
+          player.wins = player.wins + 1;
+          player.points = player.points + 3;
+          console.log(player);
+        }
+      });
+    }
+    return arr;
+  };
+  upadteLoss = (arr, idArr) => {
+    console.log('losing submission');
+    for (let i = 0; i < idArr.length; i++) {
+      arr.forEach(player => {
+        if (player.id === idArr[i]) {
+          console.log(player);
+          player.games = player.games + 1;
+          player.losses = player.losses + 1;
+          console.log(player);
+        }
+      });
+    }
+    return arr;
+  };
+  updateDraw = (arr, idArr) => {
+    console.log('draw submission');
+    for (let i = 0; i < idArr.length; i++) {
+      arr.forEach(player => {
+        if (player.id === idArr[i]) {
+          player.games = player.games + 1;
+          player.draws = player.draws + 1;
+          player.points = player.points + 1;
+        }
+      });
+    }
+    return arr;
+  };
 }
 
 export default new GamingUtils();

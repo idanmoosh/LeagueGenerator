@@ -28,7 +28,6 @@ export const GameModule = props => {
   const handlePress = () => {
     press ? setPress(false) : setPress(true);
   };
-  useEffect(() => {}, [store]);
 
   return (
     <View style={styles.playerContainer}>
@@ -90,7 +89,8 @@ export const GameModule = props => {
             e.preventDefault();
             handleScoreSubmit(teamA, teamB, scoreA, scoreB);
           }}
-          onPressOut={handlePress}>
+          onPressOut={handlePress}
+          disabled={!scoreA || !scoreB}>
           <Text style={press ? styles.button : styles.buttonPress}>Submit</Text>
         </TouchableOpacity>
       </View>

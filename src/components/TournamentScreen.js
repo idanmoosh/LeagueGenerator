@@ -3,7 +3,12 @@ import { useEffect, useState } from 'react';
 import { PlayerStats } from './playerStats';
 import { TournamentTableHeader } from './TournamentTableHeader.js';
 
-import { setCounter, updateState } from '../features/playersSlice';
+import {
+  setCounter,
+  updateState,
+  setTeamsZero,
+  updateResults,
+} from '../features/playersSlice';
 import utils from '../util/gamingUtil';
 import { setTeamId } from '../features/playersSlice';
 import { useSelector } from 'react-redux';
@@ -19,7 +24,6 @@ export const TournamentScreen = ({ route }) => {
   const playersList = [];
 
   //variables for the game
-  const [teams, setTeams] = useState([]);
   const [teamA, setTeamA] = useState([]);
   const [teamB, setTeamB] = useState([]);
   const [scoreA, setScoreA] = useState(0);
@@ -53,7 +57,7 @@ export const TournamentScreen = ({ route }) => {
     dispatch(setTeamsZero());
     let players = [...store];
     players = utils.shuffleArray(players);
-    players = utils.sortPlayersBy('games', store);
+    players = utils.sortPlayersBy('games', players);
     setTeamA([players[0]]);
     setTeamB([players[1]]);
   };
@@ -61,14 +65,14 @@ export const TournamentScreen = ({ route }) => {
   const setStandardMatch = () => {
     chooseTeams(store);
   };
-
+  // when playing 2V2 with random teams
   const setRandomMatch = () => {
     if (gamesPlayed !== 1) {
       dispatch(setTeamId());
     }
     chooseTeams(store);
   };
-
+  // choosing the teams for next game
   const chooseTeams = store => {
     let players = [...store];
     players = utils.sortPlayersBy('games', store);
@@ -80,50 +84,12 @@ export const TournamentScreen = ({ route }) => {
     setTeamB(players.filter(player => player.teamId === teams[1]));
   };
   const handleScoreSubmit = (teamA, teamB, scoreA, scoreB) => {
-    let players = [...store];
-    console.log('score submission');
-    players[0].games = 5;
-    players[1].games = 5;
-    console.log([players[0], players[1]]);
-    /* if (scoreA === scoreB) {
-      console.log('its a draw');
-      players.forEach(player => {
-        if (player.teamId === idA || player.teamId === idB) {
-          player.games++;
-          player.draws++;
-          player.points++;
-          console.log([idA, idB]);
-          console.log(player);
-        }
-      });
-    } else if (scoreA > scoreB) {
-      console.log('team A won');
-      players.forEach(player => {
-        if (player.teamId === idA) {
-          player.games++;
-          player.wins++;
-          player.points = player.points + 3;
-        } else if (player.teamId === idB) {
-          player.games++;
-          player.wins++;
-          player.points = player.points + 3;
-        }
-      });
-    } else if (scoreA < scoreB) {
-      console.log('team B won');
-      players.forEach(player => {
-        if (player.teamId === idB) {
-          player.games++;
-          player.wins++;
-          player.points = player.points + 3;
-        } else if (player.teamId === idA) {
-          player.games++;
-          player.wins++;
-          player.points = player.points + 3;
-        }
-      });
-    }*/
-    dispatch(updateState(players));
+    teamA = utils.findIds(teamA);
+    teamB = utils.findIds(teamB);
+
+    dispatch(
+      updateResults({ idA: teamA, idB: teamB, scoreA: scoreA, scoreB: scoreB })
+    );
     setScoreA('');
     setScoreB('');
   };
@@ -142,7 +108,7 @@ export const TournamentScreen = ({ route }) => {
   }, [players, playingSingles]);
 
   useEffect(() => {
-    if (counter !== gamesPlayed) {
+    if (counter !== gamesPlayed && !playingSingles) {
       chooseTeams(store);
       dispatch(setCounter({ value: gamesPlayed }));
     }

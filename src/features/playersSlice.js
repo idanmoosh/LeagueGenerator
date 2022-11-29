@@ -54,41 +54,26 @@ export const playersSlice = createSlice({
         players: action.payload,
       });
     },
-    addPlayer: (state, action) => {
-      const name = action.payload;
-      let newPlayer = createPlayer(name);
-      state.players.push(newPlayer);
-    },
-
-    upateResults: (state, action) => {
-      let id = action.payload.id;
-      let result = action.payload.result;
-      let player = state.players.filter(player => player.id == id);
-      switch (result) {
-        case 'w':
-          player.wins++;
-          player.games++;
-          player.points += 3;
-        case 'l':
-          player.losses++;
-          player.games++;
-
-        case 'd':
-          player.points++;
-          player.draws++;
-          player.games++;
-        default:
+    updateResults: (state, action) => {
+      let playersList = [...state.players];
+      let { idA, idB, scoreA, scoreB } = action.payload;
+      if (scoreA === scoreB) {
+        utils.updateDraw(playersList, idA.concat(idB));
+      } else if (scoreA > scoreB) {
+        utils.upadteWin(playersList, idA);
+        utils.upadteLoss(playersList, idB);
+      } else if (scoreA < scoreB) {
+        utils.upadteWin(playersList, idB);
+        utils.upadteLoss(playersList, idA);
       }
+      return state;
     },
   },
 });
 
 export const {
-  addPlayer,
   updateResults,
   setTeamId,
-  setTeams,
-  getPlayers,
   updateState,
   setCounter,
   setTeamsZero,
