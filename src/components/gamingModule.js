@@ -118,6 +118,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     textAlign: 'center',
     flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-around',
     borderWidth: 1,
     padding: 5,
     borderRadius: 6,
